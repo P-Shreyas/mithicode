@@ -10,6 +10,7 @@ public class App {
     static BufferedReader br;
     static Map<String,Existence> map;
     static BreakIterator bi=BreakIterator.getWordInstance();
+    static String[] excluded=new String[]{"and","or","&","of","to","is","the","a","are","in"};
     App(String path1,String path2, String path3,String outpath) {
 
         map=new HashMap<String, Existence>();
@@ -48,7 +49,9 @@ public class App {
             char c=word.charAt(0);
             if ((c> 64 && c < 90) || (c > 96 && c < 123))
             {
-                this.addToMap(word,pageno);
+                if(isNotExcluded(word)) {
+                    this.addToMap(word, pageno);
+                }
             }
             index = bi.current();
         }
@@ -84,6 +87,17 @@ public class App {
             }
             map.put(word,existence);
         }
+    }
+
+    private boolean isNotExcluded(String word)
+    {
+        boolean result=true;
+        for(int i=0;i< 10;i++)
+        {
+            if(word.equals(excluded[i]))
+                return false;
+        }
+        return result;
     }
 
 
