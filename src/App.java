@@ -1,36 +1,53 @@
 import java.io.*;
 import java.text.BreakIterator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class App {
 
     private static Map<String,Existence> map;
     private static BreakIterator bi=BreakIterator.getWordInstance();
-    private static String[] excluded=new String[]{"and","or","&","of","to","is","the","a","are","in"};
+    private static String[] excluded;
     private String outpath;
-    App(String path1,String path2, String path3,String outpath) {
+    App(String path1,String path2, String path3,String excludePath,String outpath) {
         this.outpath=outpath;
         map=new HashMap<String, Existence>();
-
+        String data;
         try {
-            String data=readStream(new FileInputStream(path1));
+
+            //Generate excluded file
+            BufferedReader in = new BufferedReader(new FileReader(excludePath));
+            String str;
+            List<String> list = new ArrayList<String>();
+            while((str = in.readLine()) != null){
+                list.add(str);
+            }
+            excluded = list.toArray(new String[0]);
+
+            //Read Page1
+            data=readStream(new FileInputStream(path1));
             this.doJob(data,1);
 
+            //Read Page2
             data=readStream(new FileInputStream(path2));
             this.doJob(data,2);
 
+            //Read Page3
             data=readStream(new FileInputStream(path3));
             this.doJob(data,3);
 
+            //Create Target.txt
             this.createTargetFile();
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private void doJob(String data, int pageno) {
+        /*
+        * Use BreakIterator to iterate over words.
+        * */
         bi.setText(data);
         int index = 0;
         while (bi.next() != BreakIterator.DONE) {
@@ -47,6 +64,9 @@ public class App {
     }
 
     private void addToMap(String word, int pageno) {
+        /*
+        * New words are added to map. if word exists new page number is added.
+        **/
         if(map.containsKey(word)) {
             switch (pageno) {
                 case 1:
@@ -89,11 +109,6 @@ public class App {
         return result;
     }
 
-
-
-
-
-
     private static String readStream(InputStream is) {
         StringBuilder sb = new StringBuilder(512);
         try {
@@ -125,10 +140,6 @@ public class App {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-
-
     }
 
     private String getCSL(String str) {
@@ -148,8 +159,12 @@ public class App {
         String page1Path="D:\\mithicode\\To be given to candidate\\proj\\Page1.txt";
         String page2Path="D:\\mithicode\\To be given to candidate\\proj\\Page2.txt";
         String page3Path="D:\\mithicode\\To be given to candidate\\proj\\Page3.txt";
-        String excludePath="D:\\mithicode\\To be given to candidate\\proj\\";
+        String excludePath="D:\\mithicode\\To be given to candidate\\proj\\exclude-words.txt";
         String outputFilePath="D:\\mithicode\\To be given to candidate\\proj\\index.txt";
-        new App(page1Path,page2Path,page3Path,outputFilePath);
+
+
+
+
+        new App(page1Path,page2Path,page3Path,excludePath,outputFilePath);
     }
 }
