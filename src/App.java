@@ -1,15 +1,14 @@
 import java.io.*;
 import java.text.BreakIterator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class App {
 
-    static Map<String,Existence> map;
-    static BreakIterator bi=BreakIterator.getWordInstance();
-    static String[] excluded=new String[]{"and","or","&","of","to","is","the","a","are","in"};
+    private static Map<String,Existence> map;
+    private static BreakIterator bi=BreakIterator.getWordInstance();
+    private static String[] excluded=new String[]{"and","or","&","of","to","is","the","a","are","in"};
     private String outpath;
     App(String path1,String path2, String path3,String outpath) {
         this.outpath=outpath;
@@ -25,20 +24,9 @@ public class App {
             data=readStream(new FileInputStream(path3));
             this.doJob(data,3);
 
-            this.printMap();
             this.createTargetFile();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        }
-
-    }
-
-    public void printMap()
-    {
-        Map<String, Existence> treeMap = new TreeMap<String, Existence>(String.CASE_INSENSITIVE_ORDER);
-        treeMap.putAll(map);
-        for (String str : treeMap.keySet()) {
-            System.out.println(str);
         }
     }
 
@@ -106,7 +94,7 @@ public class App {
 
 
 
-    public static String readStream(InputStream is) {
+    private static String readStream(InputStream is) {
         StringBuilder sb = new StringBuilder(512);
         try {
             Reader r = new InputStreamReader(is, "UTF-8");
@@ -125,7 +113,7 @@ public class App {
         String commaSeparatedList;
         Map<String, Existence> treeMap = new TreeMap<String, Existence>(String.CASE_INSENSITIVE_ORDER);
         treeMap.putAll(map);
-        PrintWriter pw= null;
+        PrintWriter pw;
         try {
             pw = new PrintWriter(new FileWriter(this.outpath));
             for (String str : treeMap.keySet()) {
