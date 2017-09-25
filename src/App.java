@@ -26,6 +26,7 @@ public class App {
             this.doJob(data,3);
 
             this.printMap();
+            this.createTargetFile();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -120,15 +121,24 @@ public class App {
     }
 
 
-    private void createTargetFile() throws IOException {
+    private void createTargetFile() {
         String commaSeparatedList;
         Map<String, Existence> treeMap = new TreeMap<String, Existence>(String.CASE_INSENSITIVE_ORDER);
         treeMap.putAll(map);
-        PrintWriter pw=new PrintWriter(new FileWriter(this.outpath));
+        PrintWriter pw= null;
+        try {
+            pw = new PrintWriter(new FileWriter(this.outpath));
+            for (String str : treeMap.keySet()) {
+                commaSeparatedList=getCSL(str);
+                pw.write(str+" : "+commaSeparatedList+"\n");
 
-        for (String str : treeMap.keySet()) {
-            commaSeparatedList=getCSL(str);
+            }
+            pw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+
 
 
     }
