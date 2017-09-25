@@ -7,12 +7,12 @@ import java.util.TreeMap;
 
 public class App {
 
-    static BufferedReader br;
     static Map<String,Existence> map;
     static BreakIterator bi=BreakIterator.getWordInstance();
     static String[] excluded=new String[]{"and","or","&","of","to","is","the","a","are","in"};
+    private String outpath;
     App(String path1,String path2, String path3,String outpath) {
-
+        this.outpath=outpath;
         map=new HashMap<String, Existence>();
 
         try {
@@ -102,6 +102,9 @@ public class App {
 
 
 
+
+
+
     public static String readStream(InputStream is) {
         StringBuilder sb = new StringBuilder(512);
         try {
@@ -114,6 +117,32 @@ public class App {
             throw new RuntimeException(e);
         }
         return sb.toString();
+    }
+
+
+    private void createTargetFile() throws IOException {
+        String commaSeparatedList;
+        Map<String, Existence> treeMap = new TreeMap<String, Existence>(String.CASE_INSENSITIVE_ORDER);
+        treeMap.putAll(map);
+        PrintWriter pw=new PrintWriter(new FileWriter(this.outpath));
+
+        for (String str : treeMap.keySet()) {
+            commaSeparatedList=getCSL(str);
+        }
+
+
+    }
+
+    private String getCSL(String str) {
+        String CSL="";
+        Existence e=map.get(str);
+        if(e.getP1())
+            CSL+="1,";
+        if(e.getP2())
+            CSL+="2,";
+        if(e.getP3())
+            CSL+="3,";
+        return CSL.substring(0,CSL.length()-1);
     }
 
     public static void main(String[] args) {
